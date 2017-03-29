@@ -101,7 +101,7 @@
  ● 访问权限（User/Supervisor）: 缺省是无权限0，表示只能Super访问。  ● 读写权限（Read/Write）: 缺省是无权限0，表示只可读取。  ● 缺页保护（Present）  ● 执行权限（No Execute）: 缺省是有权限1，表示可执行(只有64位和PAE模式下才有该标志)    
 
 当违反了这些保护措施时，p">
-<meta property="og:updated_time" content="2017-03-29T13:54:08.974Z">
+<meta property="og:updated_time" content="2017-03-29T14:07:30.552Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux page 保护机制">
 <meta name="twitter:description" content="Linux页表保护对 page 的保护措施有：  
@@ -449,22 +449,67 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">#define _PAGE_BIT_NX           63  </div><div class="line">#if defined(CONFIG_X86_64) ||  defined(CONFIG_X86_PAE)  </div><div class="line">#define _PAGE_NX  (_AT(pteval_t, 1) &lt;&lt; _PAGE_BIT_NX)  </div><div class="line">#else  </div><div class="line">#define _PAGE_NX  (_AT(pteval_t, 0))  </div><div class="line">#endif</div></pre></td></tr></table></figure>
 <p>_PAGE_NX：表示为No execute权限，从上面可以看出只有在X86_64和X86_PAE模式下有效，而在X86 模式下这已设置是无效的，等价于上面的Present位设置为0。  </p>
 <hr>
-<h4 id="例子：vmalloc与module-alloc"><a href="#例子：vmalloc与module-alloc" class="headerlink" title="例子：vmalloc与module_alloc"></a>例子：vmalloc与module_alloc</h4><ol>
-<li>Vmalloc: 实现的pgprot_t prot 为PAGE_KERNEL  </li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">static inline void *__vmalloc_node_flags(unsigned long size,</div><div class="line">                                                            int node, gfp_t flags)</div><div class="line">&#123;</div><div class="line">            return __vmalloc_node(size, 1, flags, PAGE_KERNEL,</div><div class="line">                                                            node, __builtin_return_address(0));</div><div class="line">&#125;</div><div class="line">#define __PAGE_KERNEL_EXEC                                                             \</div><div class="line">            (_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_GLOBAL)</div><div class="line">#define __PAGE_KERNEL              (__PAGE_KERNEL_EXEC | _PAGE_NX)</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">  </div><div class="line">&gt; __PAGE_KERNEL：表明读写，super，在内存里面，没有执行权限。      </div><div class="line"> </div><div class="line">--- </div><div class="line"></div><div class="line">2. Module_alloc: 实现的pgprot_t prot 为PAGE_KERNEL_EXEC,</div></pre></td></tr></table></figure>
-<p>void *module_alloc(unsigned long size)<br>{<br>            return <strong>vmalloc_node_range(size, 1, MODULES_VADDR, MODULES_END,<br>                                                GFP_KERNEL | </strong>GFP_HIGHMEM, PAGE_KERNEL_EXEC,  -1, __builtin_return_address(0));<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">3. 测试：  </div><div class="line"> </div><div class="line">利用即时编译技术思想，利用上述2中方法分配一段内存空间，直接将代码emit到内存空间中形成一个image函数，然后运行。</div></pre></td></tr></table></figure></p>
-<p>static inline u8 <em>emit_code(u8 </em>ptr, u32 bytes, unsigned int len)<br>{<br>            if (len == 1)<br>                        <em>ptr = bytes;<br>            else if (len == 2)
-                        </em>(u16 <em>)ptr = bytes;<br>            else {
-                        </em>(u32 *)ptr = bytes;<br>                        barrier();<br>            }<br>            return ptr + len;<br>}</p>
-<p>#define EMIT(bytes, len)       do { prog = emit_code(prog, bytes, len); } while (0)</p>
-<p>#define EMIT1(b1)                 EMIT(b1, 1)</p>
-<p>#define EMIT2(b1, b2)                       EMIT((b1) + ((b2) &lt;&lt; 8), 2)</p>
-<p>#define EMIT3(b1, b2, b3)     EMIT((b1) + ((b2) &lt;&lt; 8) + ((b3) &lt;&lt; 16), 3)</p>
-<p>#define EMIT4(b1, b2, b3, b4)   EMIT((b1) + ((b2) &lt;&lt; 8) + ((b3) &lt;&lt; 16) + ((b4) &lt;&lt; 24), 4)<br>struct _handle<br>{<br> unsigned int  (*bpf_func)();<br>};<br>static struct _handle handle;</p>
-<p>static int get_image()<br>{<br>            u8<em> image = NULL;<br>            u8 temp[64];<br>            u8</em> prog;<br>            unsigned char proglen = 6;<br>            prog = temp;<br>            EMIT1(0xb8);<br>            EMIT4(0x15,00,00,00);  //movl $20, %eax<br>            EMIT1(0xc3);  //ret<br>            //image = module_alloc(max_t(unsigned int,proglen,sizeof(struct work_struct)));<br>            image = vmalloc(proglen);//, GFP_KERNEL);<br>            if (!image)<br>                        return -1;<br>            memcpy(image, temp, proglen);<br>            handle.bpf_func = (void *)image;<br>            return   0;<br>}<br>static int main_init(void)<br>{<br>            int ret = 0;<br>            ret = get_image();<br>            printk(“get_image() ret:%d\n”, ret);<br>            if(!ret)<br>                        {<br>                        ret = handle.bpf_func();<br>                        printk(“ handle.bpf_func() ret:%d\n”,ret);<br>                        }<br>    return 0;<br>}<br>```  </p>
-<p>我们在x86模式下vmalloc和module_alloc方式都没问题，都没有违背page的保护原则，但是在x86_64下面vmalloc导致系统crash，由于它去掉了可执行权限，不能执行该image，违背了执行保护原则，而module_alloc能正常执行。</p>
+<h4 id="例子1：vmalloc与module-alloc"><a href="#例子1：vmalloc与module-alloc" class="headerlink" title="例子1：vmalloc与module_alloc"></a>例子1：vmalloc与module_alloc</h4><p>Vmalloc: 实现的pgprot_t prot 为PAGE_KERNEL  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">static inline void *__vmalloc_node_flags(unsigned long size, int node, gfp_t flags)</div><div class="line">&#123;</div><div class="line">            return __vmalloc_node(size, 1, flags, PAGE_KERNEL,</div><div class="line">                                                            node, __builtin_return_address(0));</div><div class="line">&#125;</div><div class="line">#define __PAGE_KERNEL_EXEC                                                             \</div><div class="line">            (_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_GLOBAL)</div><div class="line">#define __PAGE_KERNEL              (__PAGE_KERNEL_EXEC | _PAGE_NX)</div></pre></td></tr></table></figure>
+<p>这里__PAGE_KERNEL：表明读写，super，在内存里面，没有执行权限。      </p>
+<hr>
+<h4 id="例子2-Module-alloc-实现的pgprot-t-prot-为PAGE-KERNEL-EXEC"><a href="#例子2-Module-alloc-实现的pgprot-t-prot-为PAGE-KERNEL-EXEC" class="headerlink" title="例子2: Module_alloc: 实现的pgprot_t prot 为PAGE_KERNEL_EXEC,"></a>例子2: Module_alloc: 实现的pgprot_t prot 为PAGE_KERNEL_EXEC,</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">void *module_alloc(unsigned long size)</div><div class="line">&#123;</div><div class="line">            return __vmalloc_node_range(size, 1, MODULES_VADDR, MODULES_END,</div><div class="line">                                                GFP_KERNEL | __GFP_HIGHMEM, PAGE_KERNEL_EXEC,  -1, __builtin_return_address(0));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<hr>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><p>利用即时编译技术思想，利用上述2中方法分配一段内存空间，直接将代码emit到内存空间中形成一个image函数，然后运行。       </p>
+<pre><code>static inline u8 *emit_code(u8 *ptr, u32 bytes, unsigned int len)
+{
+            if (len == 1)
+                        *ptr = bytes;
+            else if (len == 2)
+                        *(u16 *)ptr = bytes;
+            else {
+                        *(u32 *)ptr = bytes;
+                        barrier();
+            }
+            return ptr + len;
+}
+#define EMIT(bytes, len)       do { prog = emit_code(prog, bytes, len); } while (0)
+#define EMIT1(b1)                 EMIT(b1, 1)
+#define EMIT2(b1, b2)                       EMIT((b1) + ((b2) &lt;&lt; 8), 2)
+#define EMIT3(b1, b2, b3)     EMIT((b1) + ((b2) &lt;&lt; 8) + ((b3) &lt;&lt; 16), 3)
+#define EMIT4(b1, b2, b3, b4)   EMIT((b1) + ((b2) &lt;&lt; 8) + ((b3) &lt;&lt; 16) + ((b4) &lt;&lt; 24), 4)
+struct _handle
+{
+ unsigned int  (*bpf_func)();
+};
+static struct _handle handle;
+
+static int get_image()
+{
+            u8* image = NULL;
+            u8 temp[64];
+            u8* prog;
+            unsigned char proglen = 6;
+            prog = temp;
+            EMIT1(0xb8);
+            EMIT4(0x15,00,00,00);  //movl $20, %eax
+            EMIT1(0xc3);  //ret
+            //image = module_alloc(max_t(unsigned int,proglen,sizeof(struct work_struct)));
+            image = vmalloc(proglen);//, GFP_KERNEL);                       
+            if (!image)
+                        return -1;
+            memcpy(image, temp, proglen);
+            handle.bpf_func = (void *)image;
+            return   0;
+}
+static int main_init(void)
+{
+            int ret = 0;      
+            ret = get_image();
+            printk(&quot;get_image() ret:%d\n&quot;, ret);
+            if(!ret)
+                        {
+                        ret = handle.bpf_func();
+                        printk(&quot; handle.bpf_func() ret:%d\n&quot;,ret);
+                        }
+    return 0;
+}
+</code></pre><p>我们在x86模式下vmalloc和module_alloc方式都没问题，都没有违背page的保护原则，但是在x86_64下面vmalloc导致系统crash，由于它去掉了可执行权限，不能执行该image，违背了执行保护原则，而module_alloc能正常执行。</p>
 
       
     </div>
@@ -694,7 +739,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux页表保护"><span class="nav-number">1.</span> <span class="nav-text">Linux页表保护</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#访问权限（User-Supervisor）"><span class="nav-number">1.0.1.</span> <span class="nav-text">访问权限（User/Supervisor）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读写权限（Read-Write）"><span class="nav-number">1.0.2.</span> <span class="nav-text">读写权限（Read/Write）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缺页保护（Present）"><span class="nav-number">1.0.3.</span> <span class="nav-text">缺页保护（Present）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#执行权限（No-Execute）"><span class="nav-number">1.0.4.</span> <span class="nav-text">执行权限（No Execute）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#例子：vmalloc与module-alloc"><span class="nav-number">1.0.5.</span> <span class="nav-text">例子：vmalloc与module_alloc</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux页表保护"><span class="nav-number">1.</span> <span class="nav-text">Linux页表保护</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#访问权限（User-Supervisor）"><span class="nav-number">1.0.1.</span> <span class="nav-text">访问权限（User/Supervisor）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读写权限（Read-Write）"><span class="nav-number">1.0.2.</span> <span class="nav-text">读写权限（Read/Write）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缺页保护（Present）"><span class="nav-number">1.0.3.</span> <span class="nav-text">缺页保护（Present）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#执行权限（No-Execute）"><span class="nav-number">1.0.4.</span> <span class="nav-text">执行权限（No Execute）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#例子1：vmalloc与module-alloc"><span class="nav-number">1.0.5.</span> <span class="nav-text">例子1：vmalloc与module_alloc</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#例子2-Module-alloc-实现的pgprot-t-prot-为PAGE-KERNEL-EXEC"><span class="nav-number">1.0.6.</span> <span class="nav-text">例子2: Module_alloc: 实现的pgprot_t prot 为PAGE_KERNEL_EXEC,</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试"><span class="nav-number">1.0.7.</span> <span class="nav-text">测试</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

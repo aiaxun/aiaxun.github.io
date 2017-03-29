@@ -101,7 +101,7 @@
  ● 访问权限（User/Supervisor）: 缺省是无权限0，表示只能Super访问。  ● 读写权限（Read/Write）: 缺省是无权限0，表示只可读取。  ● 缺页保护（Present）  ● 执行权限（No Execute）: 缺省是有权限1，表示可执行(只有64位和PAE模式下才有该标志)    
 
 当违反了这些保护措施时，p">
-<meta property="og:updated_time" content="2017-03-29T10:59:12.061Z">
+<meta property="og:updated_time" content="2017-03-29T11:04:11.703Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux page 保护机制">
 <meta name="twitter:description" content="Linux页表保护对 page 的保护措施有：  
@@ -419,37 +419,59 @@
 <blockquote>
 <p> ● 访问权限（User/Supervisor）: 缺省是无权限0，表示只能Super访问。<br>  ● 读写权限（Read/Write）: 缺省是无权限0，表示只可读取。<br>  ● 缺页保护（Present）<br>  ● 执行权限（No Execute）: 缺省是有权限1，表示可执行(只有64位和PAE模式下才有该标志)    </p>
 </blockquote>
-<p>当违反了这些保护措施时，processor 将会产生 <strong>#PF</strong>（page fault）异常。</p>
-<p>保护措施 | 标志位 | 作用域<br>访问权限 | U/S | page<br>读写权限 | R/W | page<br>执行权限 | NX  | page<br>缺页保护 | P   | table 和 page</p>
-<p>上表的 作用域 是保护措施的对象，对于缺页保护来说，它也作用于 table（各级 Page Translat Tables）<br>注意：这里的 page 包括了 4K/2M/1G page 以及 4M page</p>
-<ol>
-<li>访问权限（User/Supervisor）<br>在PTE的 Bit2 位里就是 U/S 权限位：<br>● U/S = 0：仅供 Supervisor 访问<br>● U/S = 1：User 和 Supervisor 都可以访问<br>这里的 Supervisor 是指：具有 0 - 2 level 权限 的访问者，而 User 仅仅是 3 Level 权限的访问者。</li>
-</ol>
+<p>当违反了这些保护措施时，processor 将会产生 <strong>#PF</strong>（page fault）异常。  </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">保护措施</th>
+<th style="text-align:right">标志位</th>
+<th style="text-align:center">作用域</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">访问权限</td>
+<td style="text-align:right">U/S</td>
+<td style="text-align:center">page</td>
+</tr>
+<tr>
+<td style="text-align:left">读写权限</td>
+<td style="text-align:right">R/W</td>
+<td style="text-align:center">page</td>
+</tr>
+<tr>
+<td style="text-align:left">执行权限</td>
+<td style="text-align:right">NX</td>
+<td style="text-align:center">page</td>
+</tr>
+<tr>
+<td style="text-align:left">缺页保护</td>
+<td style="text-align:right">P</td>
+<td style="text-align:center">table 和 page</td>
+</tr>
+</tbody>
+</table>
+<p>上表的 作用域 是保护措施的对象，对于缺页保护来说，它也作用于 table（各级 Page Translate Tables）<br>注意：这里的 page 包括了 4K/2M/1G page 以及 4M page  </p>
+<h4 id="访问权限（User-Supervisor）"><a href="#访问权限（User-Supervisor）" class="headerlink" title="访问权限（User/Supervisor）"></a>访问权限（User/Supervisor）</h4><p>在PTE的 Bit2 位里就是 U/S 权限位：<br>  ● U/S = 0：仅供 Supervisor 访问<br>  ● U/S = 1：User 和 Supervisor 都可以访问<br>这里的 Supervisor 是指：具有 0 - 2 level 权限 的访问者，而 User 仅仅是 3 Level 权限的访问者。</p>
 <blockquote>
 <p>#define _PAGE_BIT_USER<br>#define _PAGE_USER    (_AT(pteval_t, 1) &lt;&lt; _PAGE_BIT_USER)  </p>
 </blockquote>
 <p>_PAGE_USER：表示开启User权限  </p>
-<ol>
-<li>读写权限（Read/Write）<br>在读写权限方面同样是体现了最严格控制思想，x86/x64 体系对访问者（User/Supervisor）进行分别控制。<br>在PTE的 Bit1 位里就是 R/W 权限位：<br>● R/W = 0：only read 权限<br>● R/W = 1：read/write 权限<blockquote>
+<h4 id="读写权限（Read-Write）"><a href="#读写权限（Read-Write）" class="headerlink" title="读写权限（Read/Write）"></a>读写权限（Read/Write）</h4><p>在读写权限方面同样是体现了最严格控制思想，x86/x64 体系对访问者（User/Supervisor）进行分别控制。<br>在PTE的 Bit1 位里就是 R/W 权限位：<br>  ● R/W = 0：only read 权限<br>  ● R/W = 1：read/write 权限</p>
+<blockquote>
 <p>#define _PAGE_BIT_RW                     1<br>#define _PAGE_RW        (_AT(pteval_t, 1) &lt;&lt; _PAGE_BIT_RW)  </p>
 </blockquote>
-</li>
-</ol>
 <p>_PAGE_RW:表示开启写权限，即可读可写  </p>
-<ol>
-<li><p>缺页保护（Present）<br>在缺面保护里情形和上面 3 个保护措施有些不同：P 标志位不但影响最终的物理页面，也影响到各级的转换表<br>在PTE的 Bit0  P 标志位，它由系统软件进行设置，意义是：<br>● P = 0：不存在物理内存中<br>● P = 1：已提交到物理内存中</p>
+<h4 id="缺页保护（Present）"><a href="#缺页保护（Present）" class="headerlink" title="缺页保护（Present）"></a>缺页保护（Present）</h4><p>在缺面保护里情形和上面 3 个保护措施有些不同：P 标志位不但影响最终的物理页面，也影响到各级的转换表<br>在PTE的 Bit0  P 标志位，它由系统软件进行设置，意义是：<br>  ● P = 0：不存在物理内存中<br>  ● P = 1：已提交到物理内存中</p>
 <blockquote>
 <p>#define _PAGE_BIT_PRESENT         0<br>#define _PAGE_PRESENT       (_AT(pteval_t, 1) &lt;&lt;_PAGE_BIT_PRESENT)  </p>
 </blockquote>
-<p>_PAGE_PRESENT：表示该页存在于物理内存中。<br>上述的保护措施在x86和x86_64上都是具有的，而在PAE模式和x86<br>_64模式下增加了执行权限。  </p>
-</li>
-<li><p>执行权限（No Execute）<br>在 PAE或者x86_64 模式下在 table entry 结构里增加了 Bit63 - NX（No Execute）权限位，用来控制 page 是否有执行权限：<br>执行权限缺省情况下是打开的，也就是缺省情况下 page 是可执行的，因此：<br>● NX = 0：可执行<br>● NX = 1：不可执行</p>
-</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">#define _PAGE_BIT_NX           63  </div><div class="line">#if defined(CONFIG_X86_64) || defined(CONFIG_X86_PAE)  </div><div class="line">#define _PAGE_NX  (_AT(pteval_t, 1) &lt;&lt; _PAGE_BIT_NX)  </div><div class="line">#else  </div><div class="line">#define _PAGE_NX  (_AT(pteval_t, 0))  </div><div class="line">#endif  </div><div class="line">```  </div><div class="line"></div><div class="line">_PAGE_NX：表示为No execute权限，从上面可以看出只有在X86_64和X86_PAE模式下有效，而在X86 模式下这已设置是无效的，等价于上面的Present位设置为0。  </div><div class="line"></div><div class="line">例子：vmalloc与module_alloc</div><div class="line"> </div><div class="line">1. Vmalloc: 实现的pgprot_t prot 为PAGE_KERNEL</div></pre></td></tr></table></figure>
+<p> _PAGE_PRESENT：表示该页存在于物理内存中。<br>上述的保护措施在x86和x86_64上都是具有的，而在PAE模式和x86<br>_64模式下增加了执行权限。  </p>
+<h4 id="执行权限（No-Execute）"><a href="#执行权限（No-Execute）" class="headerlink" title="执行权限（No Execute）"></a>执行权限（No Execute）</h4><p>在 PAE或者x86_64 模式下在 table entry 结构里增加了 Bit63 - NX（No Execute）权限位，用来控制 page 是否有执行权限：<br>执行权限缺省情况下是打开的，也就是缺省情况下 page 是可执行的，因此：<br>  ● NX = 0：可执行<br>  ● NX = 1：不可执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">#define _PAGE_BIT_NX           63  </div><div class="line">#if defined(CONFIG_X86_64) || defined(CONFIG_X86_PAE)  </div><div class="line">#define _PAGE_NX  (_AT(pteval_t, 1) &lt;&lt; _PAGE_BIT_NX)  </div><div class="line">#else  </div><div class="line">#define _PAGE_NX  (_AT(pteval_t, 0))  </div><div class="line">#endif  </div><div class="line">```  </div><div class="line"></div><div class="line">_PAGE_NX：表示为No execute权限，从上面可以看出只有在X86_64和X86_PAE模式下有效，而在X86 模式下这已设置是无效的，等价于上面的Present位设置为0。  </div><div class="line"></div><div class="line">#### 例子：vmalloc与module_alloc  </div><div class="line"> </div><div class="line">1. Vmalloc: 实现的pgprot_t prot 为PAGE_KERNEL</div></pre></td></tr></table></figure>
 <p>static inline void *<strong>vmalloc_node_flags(unsigned long size,<br>                                                            int node, gfp_t flags)<br>{<br>            return </strong>vmalloc_node(size, 1, flags, PAGE_KERNEL,<br>                                                            node, __builtin_return_address(0));<br>}</p>
 <p>#define __PAGE_KERNEL_EXEC                                                             \<br>            (_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_GLOBAL)</p>
-<p>#define <strong>PAGE_KERNEL              (</strong>PAGE_KERNEL_EXEC | _PAGE_NX)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">__PAGE_KERNEL：表明读写，super，在内存里面，没有执行权限。</div><div class="line"> </div><div class="line">2. Module_alloc: 实现的pgprot_t prot 为PAGE_KERNEL_EXEC,</div></pre></td></tr></table></figure></p>
+<p>#define <strong>PAGE_KERNEL              (</strong>PAGE_KERNEL_EXEC | _PAGE_NX)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt; __PAGE_KERNEL：表明读写，super，在内存里面，没有执行权限。  </div><div class="line">  </div><div class="line"> </div><div class="line">2. Module_alloc: 实现的pgprot_t prot 为PAGE_KERNEL_EXEC,</div></pre></td></tr></table></figure></p>
 <p>void *module_alloc(unsigned long size)<br>{<br>            return <strong>vmalloc_node_range(size, 1, MODULES_VADDR, MODULES_END,<br>                                                GFP_KERNEL | </strong>GFP_HIGHMEM, PAGE_KERNEL_EXEC,  -1, __builtin_return_address(0));<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">3. 测试：  </div><div class="line"> </div><div class="line">利用即时编译技术思想，利用上述2中方法分配一段内存空间，直接将代码emit到内存空间中形成一个image函数，然后运行。</div></pre></td></tr></table></figure></p>
 <p>static inline u8 <em>emit_code(u8 </em>ptr, u32 bytes, unsigned int len)<br>{<br>            if (len == 1)<br>                        <em>ptr = bytes;<br>            else if (len == 2)
                         </em>(u16 <em>)ptr = bytes;<br>            else {
@@ -686,7 +708,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux页表保护"><span class="nav-number">1.</span> <span class="nav-text">Linux页表保护</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux页表保护"><span class="nav-number">1.</span> <span class="nav-text">Linux页表保护</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#访问权限（User-Supervisor）"><span class="nav-number">1.0.1.</span> <span class="nav-text">访问权限（User/Supervisor）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读写权限（Read-Write）"><span class="nav-number">1.0.2.</span> <span class="nav-text">读写权限（Read/Write）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缺页保护（Present）"><span class="nav-number">1.0.3.</span> <span class="nav-text">缺页保护（Present）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#执行权限（No-Execute）"><span class="nav-number">1.0.4.</span> <span class="nav-text">执行权限（No Execute）</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

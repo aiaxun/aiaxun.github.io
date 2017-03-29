@@ -3,6 +3,13 @@
   
     
     <entry>
+      <title><![CDATA[配置文件使用]]></title>
+      <url>%2F2017%2F03%2F29%2F%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%BD%BF%E7%94%A8%2F</url>
+      <content type="text"><![CDATA[常见的配置文件格式properties文件格式为： *=* 的形式，如 server.port = 80server.address = 127.0.0.1 通常以前缀作为区分，在Java程序中经常用到。 ini文件ini文件是windows上常用的配置文件，格式为： [server]address = 127.0.0.1port = 80 或者使用 “:” 作为分割符，如： [server]address: 127.0.0.1port: 80 xml文件xml文件现在已经没有那么流行了，可读性差、解析困难。但格式比较规整。一些Java框架或者组件可能会使用XML来配置。比如Springboot的配置： 1234&lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-aop&lt;/artifactId&gt;&lt;/dependency&gt; json文件Json格式天然被前端JavaScript支持，成为一种非常流行的Server和Client交互的数据传输格式。格式大致如下，可以被解析成List、dict等多种元素。 12345[ &#123; key&quot;: value &#125;,] YAML近年来新开始流行的配置文件格式，读起来比较易懂。但还没有用过。示例： 123456789languages: - Ruby - Perl - Python websites: YAML: yaml.org Ruby: ruby-lang.org Python: python.org Perl: use.perl.org 引用自 阮一峰的网络日志 总结其实各种配置文件主要是为了能够多次复用、方便修改，格式可以自己规定，在配置项比较复杂的时候，优秀的配置文件能够提高效率，节省工程量。]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[安全分析博客收藏]]></title>
       <url>%2F2017%2F03%2F28%2F%E5%AE%89%E5%85%A8%E5%88%86%E6%9E%90%E5%8D%9A%E5%AE%A2%E6%94%B6%E8%97%8F%2F</url>
       <content type="text"><![CDATA[离别歌在逛github的时候发现的安全大牛博客，后来在知乎上又看到了有人推荐该博客。该博客中分享了很多安全分析的技巧，所谓授之以渔不如授之以渔，这个博客很给力！链接离别歌]]></content>

@@ -3,6 +3,13 @@
   
     
     <entry>
+      <title><![CDATA[Spring boot入门与使用]]></title>
+      <url>%2F2017%2F03%2F30%2FSpring-boot%E5%85%A5%E9%97%A8%E4%B8%8E%E4%BD%BF%E7%94%A8%2F</url>
+      <content type="text"><![CDATA[源起工作中要部署一套比较高效、稳定的Web API服务，实现用户的登录授权、信息查询等功能。经过考虑，采用了当前流行的Spring boot框架。Spring boot优化了Spring框架的配置，使用起来风格有些类似于python Flask的风格，URL配置比较方便。 Spring Boot是由Pivotal团队提供的全新框架，其设计目的是用来简化新Spring应用的初始搭建以及开发过程。该框架使用了特定的方式来进行配置，从而使开发人员不再需要定义样板化的配置。通过这种方式，Boot致力于在蓬勃发展的快速应用开发领域（rapid application development）成为领导者。 我的入门博客： 扑耶博客 。其中的博文： 【教她写代码】使用Intellij创建第一个Springboot程序系列 Spring boot系列教程导航，写得非常浅显易懂，细节讲解详细，简单看看就能够快速入门看到效果。 看名字应该是博主给女友写的教程，点个赞！ PS: 搜索题目，百度索引到的结果竟然是CSDN转载的。。。]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[解决了Hexo next主题leanCloud配置的一个坑]]></title>
       <url>%2F2017%2F03%2F29%2F%E8%A7%A3%E5%86%B3%E4%BA%86Hexo-next%E4%B8%BB%E9%A2%98leanCloud%E9%85%8D%E7%BD%AE%E7%9A%84%E4%B8%80%E4%B8%AA%E5%9D%91%2F</url>
       <content type="text"><![CDATA[问题： Next主题按照官网配置了leanCloud阅读次数统计之后不显示统计次数。详情： 在浏览器console会报错，找不到Counter 对象。发生的原因： leanCloud应用申请之后，没有创建Counter对象。解决方法： 去leanCloud控制台新建一个Counter对象即可，允许创建者读写。PS： 完成后最好使用hexo重新编译部署一下。]]></content>

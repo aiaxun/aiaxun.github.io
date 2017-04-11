@@ -266,6 +266,288 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://uthinking.nets/2017/04/11/ipython安装遇到的一个小问题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="优秀的你">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="优秀的你">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/04/11/ipython安装遇到的一个小问题/" itemprop="url">
+                  ipython安装遇到的一个小问题
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-11T23:11:17+08:00">
+                2017-04-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/04/11/ipython安装遇到的一个小问题/" class="leancloud_visitors" data-flag-title="ipython安装遇到的一个小问题">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>在ubuntu kylin 14.04 系统上使用</p>
+<blockquote>
+<p>sudo apt-get install ipython  </p>
+</blockquote>
+<p>命令安装了ipython。在终端打开时，遇到了</p>
+<blockquote>
+<p>ImportError: No module named packaging.version</p>
+</blockquote>
+<p>这样的问题。</p>
+<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><p>在查找解决方案时，在Stackoverflow上的答案：<br><a href="http://stackoverflow.com/questions/42286447/importerror-no-module-named-packaging-version" target="_blank" rel="external">importerror-no-module-named-packaging-version</a><br>于是就去使用pip安装setuptools  </p>
+<blockquote>
+<p>sudo pip install setuptools  </p>
+</blockquote>
+<p>但安装过程中遇到报错：</p>
+<blockquote>
+<p>/usr/local/lib/python2.7/dist-packages/pip/<em>vendor/requests/packages/urllib3/util/ssl</em>.py:122: InsecurePlatformWarning: A true SSLContext object is not available. This prevents urllib3 from configuring SSL appropriately and may cause certain SSL connections to fail. You can upgrade to a newer version of Python to solve this. For more information, see <a href="https://urllib3.readthedocs.io/en/latest/security.html#insecureplatformwarning" target="_blank" rel="external">https://urllib3.readthedocs.io/en/latest/security.html#insecureplatformwarning</a>.<br>  InsecurePlatformWarning</p>
+</blockquote>
+<p>这里是讲系统中缺少了SSLContext想关的依赖库。<br>查看了一篇blog<br><a href="http://blog.csdn.net/henulwj/article/details/48131393" target="_blank" rel="external"> pip安装模块警告InsecurePlatformWarning: A true SSLContext object is not available.</a>  </p>
+<p>还有一个github上的讨论：<br><a href="https://github.com/nephila/djangocms-installer/issues/174" target="_blank" rel="external">InsecurePlatformWarning: A true SSLContext object is not available</a><br>安装上了缺乏的依赖，终于把问题解决掉了。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://uthinking.nets/2017/04/05/知识图谱/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="优秀的你">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="优秀的你">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/04/05/知识图谱/" itemprop="url">
+                  知识图谱
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-05T16:02:38+08:00">
+                2017-04-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/04/05/知识图谱/" class="leancloud_visitors" data-flag-title="知识图谱">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="知识图谱学习导航"><a href="#知识图谱学习导航" class="headerlink" title="知识图谱学习导航"></a>知识图谱学习导航</h2><p><a href="https://github.com/memect/kg-beijing" target="_blank" rel="external">北京知识图谱学习小组</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://uthinking.nets/2017/03/30/Spring-boot入门与使用/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1513,7 +1795,7 @@ static int main_init(void)
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">9</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1535,7 +1817,7 @@ static int main_init(void)
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

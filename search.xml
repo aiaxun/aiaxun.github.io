@@ -3,6 +3,20 @@
   
     
     <entry>
+      <title><![CDATA[ipython安装遇到的一个小问题]]></title>
+      <url>%2F2017%2F04%2F11%2Fipython%E5%AE%89%E8%A3%85%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E9%97%AE%E9%A2%98%2F</url>
+      <content type="text"><![CDATA[问题描述在ubuntu kylin 14.04 系统上使用 sudo apt-get install ipython 命令安装了ipython。在终端打开时，遇到了 ImportError: No module named packaging.version 这样的问题。 解决方法在查找解决方案时，在Stackoverflow上的答案：importerror-no-module-named-packaging-version于是就去使用pip安装setuptools sudo pip install setuptools 但安装过程中遇到报错： /usr/local/lib/python2.7/dist-packages/pip/vendor/requests/packages/urllib3/util/ssl.py:122: InsecurePlatformWarning: A true SSLContext object is not available. This prevents urllib3 from configuring SSL appropriately and may cause certain SSL connections to fail. You can upgrade to a newer version of Python to solve this. For more information, see https://urllib3.readthedocs.io/en/latest/security.html#insecureplatformwarning. InsecurePlatformWarning 这里是讲系统中缺少了SSLContext想关的依赖库。查看了一篇blog pip安装模块警告InsecurePlatformWarning: A true SSLContext object is not available. 还有一个github上的讨论：InsecurePlatformWarning: A true SSLContext object is not available安装上了缺乏的依赖，终于把问题解决掉了。]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[知识图谱]]></title>
+      <url>%2F2017%2F04%2F05%2F%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%2F</url>
+      <content type="text"><![CDATA[知识图谱学习导航北京知识图谱学习小组]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[Spring boot入门与使用]]></title>
       <url>%2F2017%2F03%2F30%2FSpring-boot%E5%85%A5%E9%97%A8%E4%B8%8E%E4%BD%BF%E7%94%A8%2F</url>
       <content type="text"><![CDATA[源起工作中要部署一套比较高效、稳定的Web API服务，实现用户的登录授权、信息查询等功能。经过考虑，采用了当前流行的Spring boot框架。Spring boot优化了Spring框架的配置，使用起来风格有些类似于python Flask的风格，URL配置比较方便。 Spring Boot是由Pivotal团队提供的全新框架，其设计目的是用来简化新Spring应用的初始搭建以及开发过程。该框架使用了特定的方式来进行配置，从而使开发人员不再需要定义样板化的配置。通过这种方式，Boot致力于在蓬勃发展的快速应用开发领域（rapid application development）成为领导者。 我的入门博客： 扑耶博客 。其中的博文： 【教她写代码】使用Intellij创建第一个Springboot程序系列 Spring boot系列教程导航，写得非常浅显易懂，细节讲解详细，简单看看就能够快速入门看到效果。 看名字应该是博主给女友写的教程，点个赞！ PS: 搜索题目，百度索引到的结果竟然是CSDN转载的。。。]]></content>

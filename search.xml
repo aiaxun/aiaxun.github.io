@@ -3,6 +3,13 @@
   
     
     <entry>
+      <title><![CDATA[Spring-boot 404 401等页面配置]]></title>
+      <url>%2F2017%2F04%2F12%2FSpring-boot-404-401%E7%AD%89%E9%A1%B5%E9%9D%A2%E9%85%8D%E7%BD%AE%2F</url>
+      <content type="text"><![CDATA[问题描述404，401,500等错误页面是Web开发中常用的一些界面。其中： 401 表示没有权限访问； 404 表示页面没有找到； 500 表示服务器内部错误。 在Spring boot中，由于部署需要依赖Tomcat作为容器。而tomcat中默认是没有配置这些页面的，所以需要进行配置。 解决方法参考 SpringBoot配置错误页面 spring boot 下 500 404 错误页面处理 Spring Boot自定义错误页面，Whitelabel Error Page处理方式 spring boot+thymeleaf+mybatis 上述介绍方法大同小异，只是描述的细节有所不同。]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[ipython安装遇到的一个小问题]]></title>
       <url>%2F2017%2F04%2F11%2Fipython%E5%AE%89%E8%A3%85%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E9%97%AE%E9%A2%98%2F</url>
       <content type="text"><![CDATA[问题描述在ubuntu kylin 14.04 系统上使用 sudo apt-get install ipython 命令安装了ipython。在终端打开时，遇到了 ImportError: No module named packaging.version 这样的问题。 解决方法在查找解决方案时，在Stackoverflow上的答案：importerror-no-module-named-packaging-version于是就去使用pip安装setuptools sudo pip install setuptools 但安装过程中遇到报错： /usr/local/lib/python2.7/dist-packages/pip/vendor/requests/packages/urllib3/util/ssl.py:122: InsecurePlatformWarning: A true SSLContext object is not available. This prevents urllib3 from configuring SSL appropriately and may cause certain SSL connections to fail. You can upgrade to a newer version of Python to solve this. For more information, see https://urllib3.readthedocs.io/en/latest/security.html#insecureplatformwarning. InsecurePlatformWarning 这里是讲系统中缺少了SSLContext想关的依赖库。查看了一篇blog pip安装模块警告InsecurePlatformWarning: A true SSLContext object is not available. 还有一个github上的讨论：InsecurePlatformWarning: A true SSLContext object is not available安装上了缺乏的依赖，终于把问题解决掉了。]]></content>
